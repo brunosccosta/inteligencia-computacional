@@ -8,6 +8,9 @@
 clear all
 clc
 
+%DEBUG
+debug = 1;
+
 %Raio do Robô
 raio_robo = 6;
 
@@ -44,7 +47,7 @@ plot([0 1 1 0],[0 0 1 1]);
 axis([xi xf yi yf]);
 hold on;
 
-plot_robo(centro_x_robo, centro_y_robo, raio_robo);
+plot_robo(centro_x_robo, centro_y_robo, angulo_robo, raio_robo);
 
 x_obstaculo = zeros(num_obstaculos, 1);
 y_obstaculo = zeros(num_obstaculos, 1);
@@ -72,17 +75,16 @@ while( ~((centro_x_robo - raio_robo < xi) || centro_x_robo > xf || (centro_y_rob
         x_intersection = Pint(2);
         y_intersection = Pint(1);
 
+        %usamos o produto escalar para determinar se os obstaculos estão a
+        %frente ou atras
         dot = [x_intersection - centro_x_robo; y_intersection - centro_y_robo]' * [cos(angulo_robo * pi / 180); sin(angulo_robo * pi / 180)];
 
         dist = pdist([x_intersection y_intersection; x_obstaculo(i) y_obstaculo(i)], 'Euclidean');
-        %fprintf(1, 'i: %d, dist: %.2f, dot: %.2f\n', i, dist, dot);
 
         if (dot > 0 && raio_robo + raio_obstaculo > dist)
             distancias(i) = pdist([x_obstaculo(i) y_obstaculo(i); centro_x_robo centro_y_robo], 'Euclidean');
         end
     end
-
-    plot([centro_x_robo centro_x_robo + cos(angulo_robo * pi / 180) * raio_robo], [centro_y_robo centro_y_robo + sin(angulo_robo * pi / 180) * raio_robo], 'k');
 
     bl1 = centro_y_robo - tan(angulo_robo * pi / 180)*centro_x_robo;
 
@@ -122,13 +124,15 @@ while( ~((centro_x_robo - raio_robo < xi) || centro_x_robo > xf || (centro_y_rob
     centro_x_robo = centro_x_robo + delta*cos(angulo_rad);
     centro_y_robo = centro_y_robo + delta*sin(angulo_rad);
 
-    plot_robo(centro_x_robo, centro_y_robo, raio_robo);
+    plot_robo(centro_x_robo, centro_y_robo, angulo_robo, raio_robo);
     
-    fprintf(1, 'Angulo atual = %.2f\n', angulo_robo);
-    fprintf(1, 'Posicao atual X = %.2f\n', centro_x_robo);
-    fprintf(1, 'Posicao atual Y = %.2f\n', centro_y_robo);
-    fprintf(1, 'Distancia minima = %.2f\n', distancia_minima);
-    fprintf(1, 'Saida FIS = %.2f\n', output);
+    if (debug)
+        fprintf(1, 'Angulo atual = %.2f\n', angulo_robo);
+        fprintf(1, 'Posicao atual X = %.2f\n', centro_x_robo);
+        fprintf(1, 'Posicao atual Y = %.2f\n', centro_y_robo);
+        fprintf(1, 'Distancia minima = %.2f\n', distancia_minima);
+        fprintf(1, 'Saida FIS = %.2f\n', output);
+    end
     
     passo = passo + 1;
     distancias_minimas(passo) = distancia_minima;
