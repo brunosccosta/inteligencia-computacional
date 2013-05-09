@@ -16,10 +16,10 @@ Name='Phi'
 Range=[-180 180]
 NumMFs=7
 MF1='VCW':'trimf',[-180 -150 -90]
-MF2='CW':'trimf',[-105 -75 -40]
-MF3='LCW':'trimf',[-49 -25 0]
+MF2='CW':'trimf',[-105 -70 -40]
+MF3='LCW':'trimf',[-48 -24 0]
 MF4='ZE':'trimf',[-5 0 5]
-MF5='LCCW':'trimf',[0 25 49]
+MF5='LCCW':'trimf',[0 24 48]
 MF6='CCW':'trimf',[40 70 105]
 MF7='VCCW':'trimf',[90 140 180]
 
@@ -28,10 +28,10 @@ Name='dist'
 Range=[0 220]
 NumMFs=5
 MF1='VN':'trapmf',[0 0 10 20]
-MF2='MD':'trimf',[35 45 52]
-MF3='F':'trimf',[46 75 100]
+MF2='MD':'trimf',[31 45 61]
+MF3='F':'trimf',[56 75 100]
 MF4='VF':'trapmf',[90 180 220 220]
-MF5='N':'trimf',[15 25 35]
+MF5='N':'trimf',[15 25.5 35]
 
 [Input3]
 Name='y'
@@ -49,9 +49,9 @@ Range=[-30 30]
 NumMFs=7
 MF1='RVR':'trapmf',[-30 -30 -25 -15]
 MF2='RR':'trimf',[-25 -15 -5]
-MF3='RLR':'trimf',[-7 -5 -3]
+MF3='RLR':'trimf',[-6 -5 -3]
 MF4='ZE':'trimf',[-4 0 4]
-MF5='RLL':'trimf',[3 5 7]
+MF5='RLL':'trimf',[3 5 6]
 MF6='RL':'trimf',[5 15 25]
 MF7='RVL':'trapmf',[15 25 30 30]
 
