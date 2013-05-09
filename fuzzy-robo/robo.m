@@ -3,13 +3,14 @@
 %Autores: Bruno Costa, Carla Moraes e Filipi Xavier
 %Data: 02/05/2013
 %====================================================================================================
-
-%Limpando a memoria e a tela
-clear all
-clc
-
-%DEBUG
-debug = 1;
+function[sucesso distancia] = robo(centro_x_robo, centro_y_robo, angulo_robo, debug)
+% Percorre o dominio e retorna as metricas
+% 	robo(centro_x_robo, centro_y_robo, angulo_robo, debug)
+%
+%  centro_x_robo = posicao inicial do robo no mundo
+%  centro_y_robo = posicao inicial do robo no mundo
+%  angulo_robo = angulo inicial do robo com a horizontal
+%  debug = se vai haver plots ou não
 
 %Raio do Robô
 raio_robo = 6;
@@ -18,7 +19,7 @@ raio_robo = 6;
 raio_obstaculo = 3;
 
 %Número de Obstáculos
-num_obstaculos = 10;
+num_obstaculos = 5;
 
 %Margem para iniciar os obstaculos
 margem_obstaculo = 50;
@@ -30,24 +31,22 @@ yf = 100;
 xi = 0;
 xf = 200;
 
-delta = 2;
+delta = 1;
+
+% usado para metricas de distancia
+centro_x_robo_inicial = centro_x_robo;
 
 % carregando o fis
 fis = readfis('funcoes');
 
-%Posição Inicial do Robô: Lado esquerdo do domínio
-centro_x_robo = raio_robo + 6; %robo encostado na extremidade esquerda do dominio 
-centro_y_robo = randi(yf - 2*raio_robo,1,1) + raio_robo;
-
-%Ângulo Phi Inicial: -180<= phi <=180
-angulo_robo = randi(360,1,1) - 180;
-
 %Montando o Domínio e o Robô
-plot([0 1 1 0],[0 0 1 1]);
-axis([xi xf yi yf]);
-hold on;
+if debug
+    plot([0 1 1 0],[0 0 1 1]);
+    axis([xi xf yi yf]);
+    hold on;
 
-plot_robo(centro_x_robo, centro_y_robo, angulo_robo, raio_robo);
+    plot_robo(centro_x_robo, centro_y_robo, angulo_robo, raio_robo);
+end
 
 x_obstaculo = zeros(num_obstaculos, 1);
 y_obstaculo = zeros(num_obstaculos, 1);
@@ -56,13 +55,14 @@ for i=1:num_obstaculos
     x_obstaculo(i) = randi(xf - 2*raio_obstaculo - margem_obstaculo,1,1) + raio_obstaculo + margem_obstaculo; %coordenada x do centro do obstaculo
     y_obstaculo(i) = randi(yf - 2*raio_obstaculo,1,1) + raio_obstaculo; %coordenada y do centro do obstaculo
     %distancias medidas do centro do robo ate o centro do obstaculo
-    rectangle('Position',[x_obstaculo(i)-raio_obstaculo y_obstaculo(i)-raio_obstaculo 2*raio_obstaculo raio_obstaculo*2],'Curvature',[1,1],'EdgeColor','b');
-    plot(x_obstaculo(i), y_obstaculo(i), 'b+'); 
+    if debug
+        rectangle('Position',[x_obstaculo(i)-raio_obstaculo y_obstaculo(i)-raio_obstaculo 2*raio_obstaculo raio_obstaculo*2],'Curvature',[1,1],'EdgeColor','b');
+        plot(x_obstaculo(i), y_obstaculo(i), 'b+'); 
+    end
 end
 
-distancias_minimas = [];
 passo = 0;
-
+bateu = 0;
 while( ~((centro_x_robo - raio_robo < xi) || centro_x_robo > xf || (centro_y_robo + raio_robo > yf) || (centro_y_robo - raio_robo < 0)) )
     distancias = ones(num_obstaculos + 1, 1) * 220;
     for i=1:num_obstaculos
@@ -84,8 +84,17 @@ while( ~((centro_x_robo - raio_robo < xi) || centro_x_robo > xf || (centro_y_rob
         if (dot > 0 && raio_robo + raio_obstaculo > dist)
             distancias(i) = pdist([x_obstaculo(i) y_obstaculo(i); centro_x_robo centro_y_robo], 'Euclidean');
         end
+        
+        dist_robo_obstaculo = pdist([centro_x_robo centro_y_robo; x_obstaculo(i) y_obstaculo(i)], 'Euclidean');
+        if (dist_robo_obstaculo < raio_robo + raio_obstaculo)
+            bateu = 1;
+        end
     end
 
+    if bateu
+        break;
+    end
+    
     bl1 = centro_y_robo - tan(angulo_robo * pi / 180)*centro_x_robo;
 
     if angulo_robo > 0    
@@ -124,9 +133,9 @@ while( ~((centro_x_robo - raio_robo < xi) || centro_x_robo > xf || (centro_y_rob
     centro_x_robo = centro_x_robo + delta*cos(angulo_rad);
     centro_y_robo = centro_y_robo + delta*sin(angulo_rad);
 
-    plot_robo(centro_x_robo, centro_y_robo, angulo_robo, raio_robo);
-    
     if (debug)
+        plot_robo(centro_x_robo, centro_y_robo, angulo_robo, raio_robo);
+    
         fprintf(1, 'Angulo atual = %.2f\n', angulo_robo);
         fprintf(1, 'Posicao atual X = %.2f\n', centro_x_robo);
         fprintf(1, 'Posicao atual Y = %.2f\n', centro_y_robo);
@@ -135,7 +144,17 @@ while( ~((centro_x_robo - raio_robo < xi) || centro_x_robo > xf || (centro_y_rob
     end
     
     passo = passo + 1;
-    distancias_minimas(passo) = distancia_minima;
     
-    pause(0.1);
+    if debug
+        pause(0.1);
+    end
+end
+
+if bateu
+    sucesso = 0;
+    distancia = xf - centro_x_robo;
+else
+    sucesso = 1;
+    %distancia = (passo * delta) / (xf - centro_x_robo_inicial);
+    distancia = passo;
 end
