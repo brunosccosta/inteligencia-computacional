@@ -155,6 +155,5 @@ if bateu
     distancia = xf - centro_x_robo;
 else
     sucesso = 1;
-    %distancia = (passo * delta) / (xf - centro_x_robo_inicial);
-    distancia = passo;
+    distancia = (passo * delta) / (xf - centro_x_robo_inicial);
 end
