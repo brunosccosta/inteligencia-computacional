@@ -3,16 +3,14 @@
 %Autores: Bruno Costa, Carla Moraes e Filipi Xavier
 %Data: 02/05/2013
 %====================================================================================================
-function[sucesso distancia] = robo(centro_x_robo, centro_y_robo, angulo_robo, debug)
+function[sucesso distancia] = robo(centro_x_robo, centro_y_robo, angulo_robo, fis)
 % Percorre o dominio e retorna as metricas
 % 	robo(centro_x_robo, centro_y_robo, angulo_robo, debug)
 %
 %  centro_x_robo = posicao inicial do robo no mundo
 %  centro_y_robo = posicao inicial do robo no mundo
 %  angulo_robo = angulo inicial do robo com a horizontal
-%  debug = se vai haver plots ou não
-
-fileID = fopen('exp.txt','w');
+%  fis = regras
 
 %Raio do Robô
 raio_robo = 6;
@@ -38,31 +36,12 @@ delta = 1;
 % usado para metricas de distancia
 centro_x_robo_inicial = centro_x_robo;
 
-% carregando o fis
-fis = readfis('funcoes');
-
-%Montando o Domínio e o Robô
-if debug
-    plot([0 1 1 0],[0 0 1 1]);
-    axis([xi xf yi yf]);
-    hold on;
-
-    plot_robo(centro_x_robo, centro_y_robo, angulo_robo, raio_robo);
-end
-
 x_obstaculo = zeros(num_obstaculos, 1);
 y_obstaculo = zeros(num_obstaculos, 1);
 %Montando os obstáculos
 for i=1:num_obstaculos
-    %x_obstaculo(i) = randi(xf - 2*raio_obstaculo - margem_obstaculo,1,1) + raio_obstaculo + margem_obstaculo; %coordenada x do centro do obstaculo
-    %y_obstaculo(i) = randi(yf - 2*raio_obstaculo,1,1) + raio_obstaculo; %coordenada y do centro do obstaculo
-    x_obstaculo(i) = centro_x_robo + 30;
-    y_obstaculo(i) = centro_y_robo;
-    %distancias medidas do centro do robo ate o centro do obstaculo
-    if debug
-        rectangle('Position',[x_obstaculo(i)-raio_obstaculo y_obstaculo(i)-raio_obstaculo 2*raio_obstaculo raio_obstaculo*2],'Curvature',[1,1],'EdgeColor','b');
-        plot(x_obstaculo(i), y_obstaculo(i), 'b+'); 
-    end
+    x_obstaculo(i) = randi(xf - 2*raio_obstaculo - margem_obstaculo,1,1) + raio_obstaculo + margem_obstaculo; %coordenada x do centro do obstaculo
+    y_obstaculo(i) = randi(yf - 2*raio_obstaculo,1,1) + raio_obstaculo; %coordenada y do centro do obstaculo
 end
 
 passo = 0;
@@ -134,23 +113,15 @@ while( ~((centro_x_robo - raio_robo < xi) || centro_x_robo > xf || (centro_y_rob
     end
 
     angulo_rad = (pi * angulo_robo)/180;
+    centro_x_anterior = centro_x_robo;
     centro_x_robo = centro_x_robo + delta*cos(angulo_rad);
     centro_y_robo = centro_y_robo + delta*sin(angulo_rad);
-
-    if (debug)
-        plot_robo(centro_x_robo, centro_y_robo, angulo_robo, raio_robo);
-    
-        fprintf(fileID, 'Angulo atual = %.2f\n', angulo_robo);
-        fprintf(fileID, 'Posicao atual X = %.2f\n', centro_x_robo);
-        fprintf(fileID, 'Posicao atual Y = %.2f\n', centro_y_robo);
-        fprintf(fileID, 'Distancia minima = %.2f\n', distancia_minima);
-        fprintf(fileID, 'Saida FIS = %.2f\n', output);
-    end
     
     passo = passo + 1;
     
-    if debug
-        pause(0.1);
+    if centro_x_anterior > centro_x_robo
+        bateu = 1;
+        break;
     end
 end
 
