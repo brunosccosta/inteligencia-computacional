@@ -25,13 +25,12 @@ fprintf(1, '\tMutate\n');
 mutationChildren = cell(length(parents),1);
 for i=1:length(parents)
     parent = thisPopulation{parents(i)};
-    if mutationRate < rand
-        mutationChildren{i} = parent;
-        continue;
-    end
+
     p1 = ceil((length(parent) -1) * rand);
     p2 = p1 + ceil((length(parent) - p1- 1) * rand);
+
     child = parent;
     child(p1:p2) = fliplr(child(p1:p2));
+    
     mutationChildren{i} = child;
 end

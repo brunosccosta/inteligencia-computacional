@@ -3,14 +3,23 @@ clc;
 
 w = warning ('off','all');
 
+geracoes = 20;
+
+global media;
+global melhor;
+
+media = zeros(geracoes,1);
+melhor = zeros(geracoes,1);
+
 options = gaoptimset;
 options = gaoptimset(options,'PopulationType', 'custom');
-options = gaoptimset(options,'Generations', 20);
-options = gaoptimset(options,'PopulationSize', 10);
+options = gaoptimset(options,'Generations', geracoes);
+options = gaoptimset(options,'PopulationSize', 4);
 options = gaoptimset(options,'CreationFcn', @create_robo);
 options = gaoptimset(options,'SelectionFcn', @selectionroulette);
 options = gaoptimset(options,'CrossoverFcn', @crossover_robo);
 options = gaoptimset(options,'MutationFcn', @mutate_robo);
+options = gaoptimset(options,'PlotFcn', @plot_ga);
 options = gaoptimset(options,'Display', 'off');
 options = gaoptimset(options,'UseParallel', 'always');
 
