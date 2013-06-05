@@ -3,7 +3,7 @@ clc;
 
 w = warning ('off','all');
 
-geracoes = 20;
+geracoes = 50;
 
 global media;
 global melhor;
@@ -14,13 +14,13 @@ melhor = zeros(geracoes,1);
 options = gaoptimset;
 options = gaoptimset(options,'PopulationType', 'custom');
 options = gaoptimset(options,'Generations', geracoes);
-options = gaoptimset(options,'PopulationSize', 4);
+options = gaoptimset(options,'PopulationSize', 30);
 options = gaoptimset(options,'CreationFcn', @create_robo);
 options = gaoptimset(options,'SelectionFcn', @selectionroulette);
 options = gaoptimset(options,'CrossoverFcn', @crossover_robo);
 options = gaoptimset(options,'MutationFcn', @mutate_robo);
 options = gaoptimset(options,'PlotFcn', @plot_ga);
-options = gaoptimset(options,'Display', 'off');
+options = gaoptimset(options,'Display', 'iter');
 options = gaoptimset(options,'UseParallel', 'always');
 
 [x,fval,exitflag,output,population,score] = ga(@fitness_robo,37,options);
