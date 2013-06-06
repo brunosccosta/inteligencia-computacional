@@ -17,12 +17,29 @@ end
 
 [sucessos media_distancia_sucesso media_distancia_fracasso] = robo_ga(fis);
 numero_testes = (10 * size(sucessos,1) * size(sucessos,2));
+total_sucessos = 20 - sum(sum(media_distancia_sucesso == 0));
+total_fracassos = 20 - sum(sum(media_distancia_fracasso == 0));
+
 fracao_sucessos = sum(sum(sucessos)) / numero_testes;
-media_global_distancia_sucesso = sum(sum(media_distancia_sucesso)) / numero_testes;
-media_global_distancia_fracasso = sum(sum(media_distancia_fracasso)) / numero_testes;
 
-score = 0.6*(1 - fracao_sucessos) + 0.2*(media_global_distancia_sucesso / 2) + ...
-    0.2*(1 - (media_global_distancia_fracasso / 200));
+if total_sucessos > 0
+    media_global_distancia_sucesso = sum(sum(media_distancia_sucesso)) / total_sucessos;
+else
+    media_global_distancia_sucesso = 0;
+end
 
-%fprintf(1, '\t\tFinal do individuo. Fracao_sucessos: %.2f. media_global_distancia_sucesso: %.2f. media_global_distancia_fracasso: %.2f. Score %.2f\n', ...
+if total_fracassos > 0
+    media_global_distancia_fracasso = sum(sum(media_distancia_fracasso)) / total_fracassos;
+else
+    media_global_distancia_fracasso = 0;
+end
+
+if fracao_sucessos == 0
+    score = 1;
+else
+    score = 0.7*(1 - fracao_sucessos) + 0.2*(media_global_distancia_sucesso / 200) + ...
+        0.1*(1 - (media_global_distancia_fracasso / 200));
+end
+
+%fprintf(1, '\tFinal do individuo. Fracao_sucessos: %.2f. media_global_distancia_sucesso: %.2f. media_global_distancia_fracasso: %.2f. Score %.2f\n', ...
 %        fracao_sucessos, media_global_distancia_sucesso, media_global_distancia_fracasso, score);

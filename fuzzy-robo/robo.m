@@ -3,7 +3,7 @@
 %Autores: Bruno Costa, Carla Moraes e Filipi Xavier
 %Data: 02/05/2013
 %====================================================================================================
-function[sucesso distancia] = robo(centro_x_robo, centro_y_robo, angulo_robo, debug)
+function[sucesso distancia] = robo(centro_x_robo, centro_y_robo, angulo_robo, debug, gene)
 % Percorre o dominio e retorna as metricas
 % 	robo(centro_x_robo, centro_y_robo, angulo_robo, debug)
 %
@@ -21,7 +21,7 @@ raio_robo = 6;
 raio_obstaculo = 3;
 
 %Número de Obstáculos
-num_obstaculos = 1;
+num_obstaculos = 5;
 
 %Margem para iniciar os obstaculos
 margem_obstaculo = 50;
@@ -39,7 +39,12 @@ delta = 1;
 centro_x_robo_inicial = centro_x_robo;
 
 % carregando o fis
+gene = gene{1};
 fis = readfis('funcoes');
+
+for i=1:size(gene,1),
+    fis.rule(i).consequent = gene(i);
+end
 
 %Montando o Domínio e o Robô
 if debug
@@ -54,10 +59,8 @@ x_obstaculo = zeros(num_obstaculos, 1);
 y_obstaculo = zeros(num_obstaculos, 1);
 %Montando os obstáculos
 for i=1:num_obstaculos
-    %x_obstaculo(i) = randi(xf - 2*raio_obstaculo - margem_obstaculo,1,1) + raio_obstaculo + margem_obstaculo; %coordenada x do centro do obstaculo
-    %y_obstaculo(i) = randi(yf - 2*raio_obstaculo,1,1) + raio_obstaculo; %coordenada y do centro do obstaculo
-    x_obstaculo(i) = centro_x_robo + 30;
-    y_obstaculo(i) = centro_y_robo;
+    x_obstaculo(i) = randi(xf - 2*raio_obstaculo - margem_obstaculo,1,1) + raio_obstaculo + margem_obstaculo; %coordenada x do centro do obstaculo
+    y_obstaculo(i) = randi(yf - 2*raio_obstaculo,1,1) + raio_obstaculo; %coordenada y do centro do obstaculo
     %distancias medidas do centro do robo ate o centro do obstaculo
     if debug
         rectangle('Position',[x_obstaculo(i)-raio_obstaculo y_obstaculo(i)-raio_obstaculo 2*raio_obstaculo raio_obstaculo*2],'Curvature',[1,1],'EdgeColor','b');

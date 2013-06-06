@@ -19,7 +19,7 @@ raio_robo = 6;
 raio_obstaculo = 3;
 
 %Número de Obstáculos
-num_obstaculos = 1;
+num_obstaculos = 5;
 
 %Margem para iniciar os obstaculos
 margem_obstaculo = 50;
@@ -46,7 +46,7 @@ end
 
 passo = 0;
 bateu = 0;
-while( ~((centro_x_robo - raio_robo < xi) || centro_x_robo > xf || (centro_y_robo + raio_robo > yf) || (centro_y_robo - raio_robo < 0)) )
+while( ~(centro_x_robo > xf) )
     distancias = ones(num_obstaculos + 1, 1) * 220;
     for i=1:num_obstaculos
         bl1 = centro_y_robo - tan(angulo_robo * pi / 180)*centro_x_robo;
@@ -123,6 +123,11 @@ while( ~((centro_x_robo - raio_robo < xi) || centro_x_robo > xf || (centro_y_rob
         bateu = 1;
         break;
     end
+    
+    if (centro_y_robo + raio_robo > yf) || (centro_y_robo - raio_robo < 0)
+        bateu = 1;
+        break;
+    end
 end
 
 if bateu
@@ -130,5 +135,5 @@ if bateu
     distancia = xf - centro_x_robo;
 else
     sucesso = 1;
-    distancia = (passo * delta) / (xf - centro_x_robo_inicial);
+    distancia = (passo * delta);
 end

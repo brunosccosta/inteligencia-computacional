@@ -3,7 +3,7 @@ clc;
 
 w = warning ('off','all');
 
-geracoes = 50;
+geracoes = 30;
 
 global media;
 global melhor;
@@ -14,7 +14,7 @@ melhor = zeros(geracoes,1);
 options = gaoptimset;
 options = gaoptimset(options,'PopulationType', 'custom');
 options = gaoptimset(options,'Generations', geracoes);
-options = gaoptimset(options,'PopulationSize', 30);
+options = gaoptimset(options,'PopulationSize', 20);
 options = gaoptimset(options,'CreationFcn', @create_robo);
 options = gaoptimset(options,'SelectionFcn', @selectionroulette);
 options = gaoptimset(options,'CrossoverFcn', @crossover_robo);
